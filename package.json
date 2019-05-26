@@ -1,0 +1,33 @@
+{
+  "name": "fundamentalanalysishistoricaldataserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run build && node ./dist/bin/www.js",
+    "build": "tsc",
+    "dev": "nodemon --watch \"src/\" --exec \"ts-node src/bin/www.ts\" -e ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniloaleixo/fundamentalAnalysisHistoricalDataServer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daniloaleixo/fundamentalAnalysisHistoricalDataServer/issues"
+  },
+  "homepage": "https://github.com/daniloaleixo/fundamentalAnalysisHistoricalDataServer#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-graphql": "^0.8.0",
+    "graphql": "^14.3.1",
+    "ts-node": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.1",
+    "nodemon": "1.19.1",
+    "typescript": "3.4.5"
+  }
+}
