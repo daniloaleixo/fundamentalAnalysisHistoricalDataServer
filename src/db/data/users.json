@@ -1,14 +1,29 @@
 [
   {
-    "id": "BJrp-DudG",
-    "email": "alice@facegle.io",
-    "password": "alice123",
-    "companyId": "HJRa-DOuG"
-  },
-  {
-    "id": "ry9pbwdOz",
-    "email": "bob@goobook.co",
-    "password": "bob123",
-    "companyId": "SJV0-wdOM"
-  }
+
+    "stockCode": "PETR4",
+    "score": 5.6,
+    "stockPrice": 32.02,
+    "patrimonioLiquido": 213123123123,
+    "liquidezCorrente": 4342324,
+    "ROE": 4342324,
+    "divSobrePatrimonio": 4342324,
+    "crescimentoCincoAnos": 4342324,
+    "precoSobreVP": 4342324,
+    "precoSobreLucro": 4342324,
+    "dividendos": 4342324,
+    "PSR": 4342324,
+    "precoSobreAtivo": 4342324,
+    "precoSobreCapitalGiro": 4342324,
+    "precoSobreEBIT": 4342324,
+    "precoSobreAtivoCirculante": 4342324,
+    "EVSobreEBIT": 4342324,
+    "margemEBIT": 4342324,
+    "margemLiquida": 4342324,
+    "ROIC": 4342324,
+    "liquidezDoisMeses": 434556546,
+    "timestamp": "Sun May 26 2019 21:40:58 GMT-0300 (Brasilia Standard Time)"
+    }
+    
 ]
+
