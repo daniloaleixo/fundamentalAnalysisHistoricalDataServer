@@ -31,27 +31,27 @@ const comparadores = {
 // });
 
 interface IStock {
-  stockCode: String,
-  score: Number,
-  stockPrice: Number,
-  patrimonioLiquido: String,
-  liquidezCorrente: String,
-  ROE: Number,
-  divSobrePatrimonio: Number,
-  crescimentoCincoAnos: Number,
-  precoSobreVP: Number,
-  precoSobreLucro: Number,
-  dividendos: Number,
-  PSR: Number,
-  precoSobreAtivo: Number,
-  precoSobreCapitalGiro: Number,
-  precoSobreEBIT: Number,
-  precoSobreAtivoCirculante: Number,
-  EVSobreEBIT: Number,
-  margemEBIT: Number,
-  margemLiquida: Number,
-  ROIC: Number,
-  liquidezDoisMeses: Number,
+  stockCode: string,
+  score: number,
+  stockPrice: number,
+  patrimonioLiquido: number,
+  liquidezCorrente: number,
+  ROE: number,
+  divSobrePatrimonio: number,
+  crescimentoCincoAnos: number,
+  precoSobreVP: number,
+  precoSobreLucro: number,
+  dividendos: number,
+  PSR: number,
+  precoSobreAtivo: number,
+  precoSobreCapitalGiro: number,
+  precoSobreEBIT: number,
+  precoSobreAtivoCirculante: number,
+  EVSobreEBIT: number,
+  margemEBIT: number,
+  margemLiquida: number,
+  ROIC: number,
+  liquidezDoisMeses: number,
   timestamp: Date,
 }
 
@@ -96,6 +96,7 @@ async function saveAllStocks(): Promise<void> {
   });
 
   let allStocks: IStock[] = await getFirebasePayload(firebase.database());
+  console.log("Now I have all the stocks from firebase", Object.keys(allStocks).length);
   allStocks = calculateScores(allStocks);
 
   // console.log(allStocks);
@@ -110,8 +111,7 @@ async function saveAllStocks(): Promise<void> {
     return {
       insertOne: {
         document: {
-          ...item,
-          timestamp: new Date()
+          ...item
         }
       }
     }
@@ -120,7 +120,8 @@ async function saveAllStocks(): Promise<void> {
   try {
     const results = await collection.bulkWrite(bulkWriteReqArray);
     console.log('Modified mongodb doc count : ', results.modifiedCount);
-    console.log('Inserted mongodb doc count : ', results.upsertedCount);
+    console.log('Inserted mongodb doc count : ', results.insertedCount);
+    process.exit(0);
   } catch (e) {
     console.log("ERRO", e);
     process.exit(-1);
@@ -178,7 +179,7 @@ async function getConnection(database: string): Promise<Db> {
   });
 }
 
-const calculateScores = function (stockArray: any[]): IStock[] {
+const calculateScores = function (stockHash: any): IStock[] {
   console.log('calculando socres');
   let dividePor = 0;
   Object.keys(comparadores).forEach(function (elem: any) {
@@ -186,48 +187,83 @@ const calculateScores = function (stockArray: any[]): IStock[] {
   })
   console.log('dividePor', dividePor);
 
+  const stocks: IStock[] = [];
+
+  const stockArray: any[] = Object.keys(stockHash).map(key => stockHash[key]);
+
   for (var i = 0; i < stockArray.length; i++) {
     if (typeof (stockArray[i]) == "object") {
       Object.keys(stockArray[i]).forEach(function (stock) {
         var nota = 0.0;
 
-        var patrLiq = parseFloat(stockArray[i][stock]["Pat.Liq"].replace(/\./g, '').replace(/\,/g, '.'));
+        const patrLiq: number = parseFloat(stockArray[i][stock]["Pat.Liq"].replace(/\./g, '').replace(/\,/g, '.'));
         if (comparadores.patrLiq.checked && patrLiq > comparadores.patrLiq.value)
           nota = nota + 1
-        var liqCorr = parseFloat(stockArray[i][stock]["Liq.Corr."].replace(/\./g, '').replace(/,/g, '.'));
+        const liqCorr: number = parseFloat(stockArray[i][stock]["Liq.Corr."].replace(/\./g, '').replace(/,/g, '.'));
         if (comparadores.liqCorr.checked && liqCorr > comparadores.liqCorr.value)
           nota = nota + 1
-        var roe = parseFloat(stockArray[i][stock]["ROE"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
+        const roe: number = parseFloat(stockArray[i][stock]["ROE"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
         if (comparadores.roe.checked && roe > comparadores.roe.value)
           nota = nota + 1
-        var divPat = parseFloat(stockArray[i][stock]["Div.Brut/Pat."].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
+        const divPat: number = parseFloat(stockArray[i][stock]["Div.Brut/Pat."].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
         if (comparadores.divPat.checked && divPat * 100 < comparadores.divPat.value && divPat > 0)
           nota = nota + 1
-        var cresc = parseFloat(stockArray[i][stock]["Cresc.5a"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
+        const cresc: number = parseFloat(stockArray[i][stock]["Cresc.5a"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
         if (comparadores.cresc.checked && cresc > comparadores.cresc.value)
           nota = nota + 1
-        var pvp = parseFloat(stockArray[i][stock]["P/VP"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
+        const pvp: number = parseFloat(stockArray[i][stock]["P/VP"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
         if (comparadores.pvp.checked && pvp < comparadores.pvp.value && pvp > 0)
           nota = nota + 1
-        var pl = parseFloat(stockArray[i][stock]["P/L"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
+        const pl: number = parseFloat(stockArray[i][stock]["P/L"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
         if (comparadores.pl.checked && pl < comparadores.pl.value && pl > 0)
           nota = nota + 1
-        var dy = parseFloat(stockArray[i][stock]["DY"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
+        const dy: number = parseFloat(stockArray[i][stock]["DY"].replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
         if (comparadores.dy.checked && dy > comparadores.dy.value)
           nota = nota + 1
         if (comparadores.plxpvp.checked && pl * pvp < comparadores.plxpvp.value)
           nota = nota + 1;
 
-        stockArray[i][stock]["nota"] = (nota / dividePor * 10.0).toFixed(2);
+        const newStock: IStock = {
+          patrimonioLiquido: patrLiq,
+          liquidezCorrente: liqCorr,
+          ROE: roe,
+          divSobrePatrimonio: divPat,
+          crescimentoCincoAnos: cresc,
+          precoSobreVP: pvp,
+          precoSobreLucro: pl,
+          dividendos: dy,
+          stockCode: stock.toString(),
+          score: (nota / dividePor * 10.0),
+          stockPrice: turnIntoFloat(stockArray[i][stock].cotacao),
+          PSR: turnIntoFloat(stockArray[i][stock].PSR),
+          precoSobreAtivo: turnIntoFloat(stockArray[i][stock]['P/Ativo']),
+          precoSobreCapitalGiro: turnIntoFloat(stockArray[i][stock]['P/Cap.Giro']),
+          precoSobreEBIT: turnIntoFloat(stockArray[i][stock]['P/EBIT']),
+          precoSobreAtivoCirculante: turnIntoFloat(stockArray[i][stock]['P/Ativ.Circ.Liq.']),
+          EVSobreEBIT: turnIntoFloat(stockArray[i][stock]['EV/EBIT']),
+          margemEBIT: turnIntoFloat(stockArray[i][stock].EBITDA),
+          margemLiquida: turnIntoFloat(stockArray[i][stock]['Mrg.Liq.']),
+          ROIC: turnIntoFloat(stockArray[i][stock].ROIC),
+          liquidezDoisMeses: turnIntoFloat(stockArray[i][stock]['Liq.2m.']),
+          timestamp: new Date()
+        };
+        stocks.push(newStock);
 
+        stockArray[i][stock]["nota"] = (nota / dividePor * 10.0).toFixed(2);
+        stockArray[i][stock]["stock"] = stock;
         // console.log([stock, stockArray[i][stock]["nota"], patrLiq, liqCorr, roe, divPat, cresc, pvp, pl, dy])
 
       });
     }
   }
 
-  return stockArray;
+  console.log("Todas as notas calculadas");
+
+  return stocks;
 }
 
+function turnIntoFloat(num: string): number {
+  return parseFloat(num.replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
+}
 
 saveStockHistory();
