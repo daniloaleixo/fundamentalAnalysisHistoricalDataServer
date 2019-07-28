@@ -273,7 +273,7 @@ function turnIntoFloat(num: string): number {
 
 
 // Run once a week
-// if ((new Date()).getDay() == 0) {
-saveStockHistory();
-// } else
-//   process.exit(0);
+if ((new Date()).getDay() == 0) {
+  saveStockHistory();
+} else
+  process.exit(0);
