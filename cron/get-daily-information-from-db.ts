@@ -1,5 +1,6 @@
 import * as firebase from "firebase";
 import { Db, MongoClient } from "mongodb";
+import { IStock } from "../shared/interfaces";
 require('dotenv').config();
 
 
@@ -29,30 +30,6 @@ const comparadores = {
 //  response.send("Hello from Firebase!");
 // });
 
-interface IStock {
-  stockCode: string,
-  score: number,
-  stockPrice: number,
-  patrimonioLiquido: number,
-  liquidezCorrente: number,
-  ROE: number,
-  divSobrePatrimonio: number,
-  crescimentoCincoAnos: number,
-  precoSobreVP: number,
-  precoSobreLucro: number,
-  dividendos: number,
-  PSR: number,
-  precoSobreAtivo: number,
-  precoSobreCapitalGiro: number,
-  precoSobreEBIT: number,
-  precoSobreAtivoCirculante: number,
-  EVSobreEBIT: number,
-  margemEBIT: number,
-  margemLiquida: number,
-  ROIC: number,
-  liquidezDoisMeses: number,
-  timestamp: Date,
-}
 
 
 
