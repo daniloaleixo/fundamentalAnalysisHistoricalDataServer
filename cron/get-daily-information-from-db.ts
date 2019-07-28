@@ -1,6 +1,5 @@
-import * as lodash from "lodash";
-import { MongoClient, Db } from "mongodb";
 import * as firebase from "firebase-admin";
+import { Db, MongoClient } from "mongodb";
 require('dotenv').config();
 
 
@@ -103,24 +102,25 @@ async function saveAllStocks(): Promise<void> {
   console.log("Agora tenho todos os stocks, tamanho: ", allStocks.length);
 
   const databaseName = "stocks";
-  const tableName = "historicalData";
 
-  const dbConn: Db = await getConnection(databaseName);
-  const collection = dbConn.collection(tableName);
-  const bulkWriteReqArray: any[] = lodash.map(allStocks, (item: IStock) => {
-    return {
-      insertOne: {
-        document: {
-          ...item
-        }
-      }
-    }
-  });
+  const mongoClient: MongoClient = await getConnection();
+  const dbConn: Db = mongoClient.db(databaseName);
 
   try {
-    const results = await collection.bulkWrite(bulkWriteReqArray);
-    console.log('Modified mongodb doc count : ', results.modifiedCount);
-    console.log('Inserted mongodb doc count : ', results.insertedCount);
+    let inserted = 0;
+    try {
+      for (let index = 0; index < allStocks.length; index++) {
+        const stock = allStocks[index];
+        const collection = dbConn.collection(stock.stockCode);
+        const results = await collection.insertOne(stock);
+        console.log(`Saved stock ${index + 1} of ${allStocks.length}`);
+        inserted = results.insertedCount ? inserted + 1 : inserted;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    console.log("Inserted a total of ", inserted, " stoks");
+    await closeConnection(mongoClient);
     process.exit(0);
   } catch (e) {
     console.log("ERRO", e);
@@ -165,17 +165,26 @@ async function getFirebasePayload(database: any): Promise<IStock[]> {
 }
 
 
-async function getConnection(database: string): Promise<Db> {
+async function getConnection(): Promise<MongoClient> {
   return new Promise(async (resolve, reject) => {
     try {
       const url = 'mongodb+srv://' + process.env.USER + ':' + process.env.PASSWORD + '@' + process.env.HOST;
       const client = new MongoClient(url, { useNewUrlParser: true });
       await client.connect();
-      resolve(client.db(database));
+      resolve(client);
     } catch (error) {
       console.error(error);
       reject(error);
     }
+  });
+}
+
+async function closeConnection(mongoClient: MongoClient): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    mongoClient.close((err) => {
+      if (err) reject(err);
+      else resolve();
+    })
   });
 }
 
