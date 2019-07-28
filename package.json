@@ -8,7 +8,7 @@
     "start": "node ./dist/bin/www.js",
     "build": "tsc",
     "dev": "nodemon --watch \"src/\" --exec \"ts-node src/bin/www.ts\" -e ts",
-    "cron": "node cron/get-daily-information-from-db.js"
+    "cron": "node dist/cron/get-daily-information-from-db.js"
   },
   "repository": {
     "type": "git",
