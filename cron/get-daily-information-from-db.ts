@@ -1,4 +1,4 @@
-import * as firebase from "firebase-admin";
+import * as firebase from "firebase";
 import { Db, MongoClient } from "mongodb";
 require('dotenv').config();
 
@@ -57,14 +57,11 @@ interface IStock {
 
 
 export const saveStockHistory = () => {
-  // export const saveStockHistory = functions.database.ref('/stocks')
-  //   .onWrite((change: Change<DataSnapshot>, context) => {
 
 
   return saveAllStocks()
     .then((res) => {
       console.log(res);
-      // console.log('Payload:', change, "Context", context);
 
     })
     .catch(err => {
@@ -76,25 +73,20 @@ export const saveStockHistory = () => {
 async function saveAllStocks(): Promise<void> {
 
   // Init firebase
-  firebase.initializeApp({
-    credential: firebase.credential.cert(
-      <any>{
-        "type": "service_account",
-        "project_id": process.env.project_id,
-        "private_key_id": process.env.private_key_id,
-        "client_email": process.env.client_email,
-        "client_id": process.env.client_id,
-        "auth_uri": process.env.auth_uri,
-        "token_uri": process.env.token_uri,
-        "auth_provider_x509_cert_url": process.env.auth_provider_x509_cert_url,
-        "client_x509_cert_url": process.env.client_x509_cert_url,
-        "private_key": (<string>process.env.private_key).replace(/\\n/g, '\n'),
-      }
-    ),
-    databaseURL: process.env.FIREBASE_URL
-  });
+  console.log("Initializing Firebase", process.env);
+  const firebaseApp = firebase.initializeApp(
+    {
+      apiKey: process.env.apiKey,
+      authDomain: process.env.authDomain,
+      databaseURL: process.env.databaseURL,
+      projectId: process.env.projectId,
+      storageBucket: process.env.storageBucket,
+      messagingSenderId: process.env.messagingSenderId,
+      appId: process.env.appId,
+    }
+  );
 
-  let allStocks: IStock[] = await getFirebasePayload(firebase.database());
+  let allStocks: IStock[] = await getFirebasePayload(firebaseApp.database());
   console.log("Now I have all the stocks from firebase", Object.keys(allStocks).length);
   allStocks = calculateScores(allStocks);
 
@@ -129,8 +121,8 @@ async function saveAllStocks(): Promise<void> {
 
 }
 
-async function getFirebasePayload(database: any): Promise<IStock[]> {
-  return new Promise<IStock[]>((resolve: any) => {
+async function getFirebasePayload(database: firebase.database.Database): Promise<IStock[]> {
+  return new Promise<IStock[]>((resolve: any, reject: any) => {
     database.ref().child('stocks').once('value').then((snapshot: any) => {
 
       console.log("Consegui as infos do firebase ", snapshot.val() != undefined);
@@ -160,6 +152,9 @@ async function getFirebasePayload(database: any): Promise<IStock[]> {
 
 
       resolve(arrayStocksHistory[0]);
+    }, (error) => {
+      console.log("deu erro", error);
+      reject(error);
     });
   });
 }
@@ -275,4 +270,10 @@ function turnIntoFloat(num: string): number {
   return parseFloat(num.replace(/\./g, '').replace(/\,/g, '.').replace(/%/g, ''));
 }
 
+
+
+// Run once a week
+// if ((new Date()).getDay() == 0) {
 saveStockHistory();
+// } else
+//   process.exit(0);
