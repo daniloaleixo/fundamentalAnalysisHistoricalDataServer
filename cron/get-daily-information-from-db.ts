@@ -88,7 +88,7 @@ async function saveAllStocks(): Promise<void> {
         "token_uri": process.env.token_uri,
         "auth_provider_x509_cert_url": process.env.auth_provider_x509_cert_url,
         "client_x509_cert_url": process.env.client_x509_cert_url,
-        "private_key": process.env.private_key,
+        "private_key": (<string>process.env.private_key).replace(/\\n/g, '\n'),
       }
     ),
     databaseURL: process.env.FIREBASE_URL
