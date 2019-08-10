@@ -1,106 +1,5 @@
 import { ApolloServer, gql } from 'apollo-server';
-
-// This is a (sample) collection of books we'll be able to query
-// the GraphQL server for.  A more complete example might fetch
-// from an existing data source like a REST API or database.
-const stocks = [
-  {
-    stockCode: "PETR4",
-    score: 8,
-    stockPrice: 26.09,
-    patrimonioLiquido: 282659000000.00,
-    liquidezCorrente: 1.15,
-    ROE: 8.08,
-    divSobrePatrimonio: 1.46,
-    crescimentoCincoAnos: 0.56,
-    precoSobreVP: 1.20,
-    precoSobreLucro: 14.89,
-    dividendos: 3.72,
-    PSR: 0.958,
-    precoSobreAtivo: 0.359,
-    precoSobreCapitalGiro: 19.94,
-    precoSobreEBIT: 3.47,
-    precoSobreAtivoCirculante: -0.64,
-    EVSobreEBIT: 7.26,
-    margemEBIT: 27.64,
-    margemLiquida: 6.70,
-    ROIC: 11.09,
-    liquidezDoisMeses: 1639450000.00,
-    timestamp: "2019-02-01T02:00:00.000Z",
-  },
-  {
-    stockCode: "PETR4",
-    score: 8,
-    stockPrice: 27.09,
-    patrimonioLiquido: 282659000000.00,
-    liquidezCorrente: 1.15,
-    ROE: 8.08,
-    divSobrePatrimonio: 1.46,
-    crescimentoCincoAnos: 0.56,
-    precoSobreVP: 1.20,
-    precoSobreLucro: 14.89,
-    dividendos: 3.72,
-    PSR: 0.958,
-    precoSobreAtivo: 0.359,
-    precoSobreCapitalGiro: 19.94,
-    precoSobreEBIT: 3.47,
-    precoSobreAtivoCirculante: -0.64,
-    EVSobreEBIT: 7.26,
-    margemEBIT: 27.64,
-    margemLiquida: 6.70,
-    ROIC: 11.09,
-    liquidezDoisMeses: 1639450000.00,
-    timestamp: "2019-08-10T19:25:34.739Z",
-  },
-  {
-    stockCode: "PETR4",
-    score: 8,
-    stockPrice: 28.09,
-    patrimonioLiquido: 282659000000.00,
-    liquidezCorrente: 1.15,
-    ROE: 8.08,
-    divSobrePatrimonio: 1.46,
-    crescimentoCincoAnos: 0.56,
-    precoSobreVP: 1.20,
-    precoSobreLucro: 14.89,
-    dividendos: 3.72,
-    PSR: 0.958,
-    precoSobreAtivo: 0.359,
-    precoSobreCapitalGiro: 19.94,
-    precoSobreEBIT: 3.47,
-    precoSobreAtivoCirculante: -0.64,
-    EVSobreEBIT: 7.26,
-    margemEBIT: 27.64,
-    margemLiquida: 6.70,
-    ROIC: 11.09,
-    liquidezDoisMeses: 1639450000.00,
-    timestamp: "2019-06-01T03:00:00.000Z",
-  },
-  {
-    stockCode: "ITSA4",
-    score: 8,
-    stockPrice: 28.09,
-    patrimonioLiquido: 282659000000.00,
-    liquidezCorrente: 1.15,
-    ROE: 8.08,
-    divSobrePatrimonio: 1.46,
-    crescimentoCincoAnos: 0.56,
-    precoSobreVP: 1.20,
-    precoSobreLucro: 14.89,
-    dividendos: 3.72,
-    PSR: 0.958,
-    precoSobreAtivo: 0.359,
-    precoSobreCapitalGiro: 19.94,
-    precoSobreEBIT: 3.47,
-    precoSobreAtivoCirculante: -0.64,
-    EVSobreEBIT: 7.26,
-    margemEBIT: 27.64,
-    margemLiquida: 6.70,
-    ROIC: 11.09,
-    liquidezDoisMeses: 1639450000.00,
-    timestamp: "2019-06-01T03:00:00.000Z",
-  }
-];
+import db from "../db/stocks";
 
 const allProperties = [
   "stockCode", "score", "stockPrice", "patrimonioLiquido", "liquidezCorrente", "ROE", "divSobrePatrimonio", "crescimentoCincoAnos", "precoSobreVP", "precoSobreLucro", "dividendos", "PSR", "precoSobreAtivo", "precoSobreCapitalGiro", "precoSobreEBIT", "precoSobreAtivoCirculante", "EVSobreEBIT", "margemEBIT", "margemLiquida", "ROIC", "liquidezDoisMeses", "timestamp"
@@ -151,7 +50,7 @@ const typeDefs = gql`
 // schema.  We'll retrieve books from the "books" array above.
 const resolvers = {
   Query: {
-    allStockCodes: () => stocks.map(s => s.stockCode),
+    allStockCodes: () => db.map(s => s.stockCode),
     allProperties: () => allProperties,
     stock: (_root: any, args: any) => getStock(args.id, args.startDate, args.endDate),
     compare: (_root: any, args: any) => {
@@ -164,11 +63,11 @@ const resolvers = {
 
 function getStock(id: string, startDate?: string, endDate?: string): any[] {
   if (startDate && endDate)
-    return stocks.filter(s => s.stockCode == id && new Date(s.timestamp) >= new Date(startDate) && new Date(s.timestamp) <= new Date(endDate));
+    return db.filter(s => s.stockCode == id && new Date(s.timestamp) >= new Date(startDate) && new Date(s.timestamp) <= new Date(endDate));
   else if (startDate)
-    return stocks.filter(s => s.stockCode == id && new Date(s.timestamp) >= new Date(startDate));
+    return db.filter(s => s.stockCode == id && new Date(s.timestamp) >= new Date(startDate));
   else
-    return stocks.filter(s => s.stockCode == id);
+    return db.filter(s => s.stockCode == id);
 }
 
 // In the most basic sense, the ApolloServer can be started
