@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./dist/bin/www.js",
+    "start": "ENV=dev node dist/src/server/server.js",
     "build": "tsc",
     "dev": "nodemon --watch \"src/\" --exec \"ts-node src/bin/www.ts\" -e ts",
     "cron": "node dist/cron/get-daily-information-from-db.js"
