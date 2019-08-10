@@ -1,4 +1,5 @@
 import { MongoDB } from "../db/mongo";
+import { IStock } from "../../shared/interfaces";
 
 
 
@@ -17,8 +18,7 @@ export const resolvers = {
     allStockCodes: () => getStockCodes(),
     allProperties: () => allProperties,
     stock: (_root: any, args: any) => getStock(args.id, args.startDate, args.endDate),
-    compare: (_root: any, args: any) =>
-      [].concat.apply([], args.ids.map((id: string) => getStock(id, args.startDate, args.endDate)))
+    compare: (_root: any, args: any) => compare(args.ids, args.startDate, args.endDate)
   }
 };
 
@@ -29,7 +29,7 @@ async function getStockCodes(): Promise<string[]> {
 }
 
 
-async function getStock(id: string, _startDate?: string, _endDate?: string): Promise<any[]> {
+async function getStock(id: string, _startDate?: string, _endDate?: string): Promise<IStock[]> {
   const db = MongoDB.getDBConn();
   const collection = db.collection(id);
 
@@ -38,5 +38,14 @@ async function getStock(id: string, _startDate?: string, _endDate?: string): Pro
   // else if (startDate)
   //   return db.filter(s => s.stockCode == id && new Date(s.timestamp) >= new Date(startDate));
   // else
-  return await collection.find({ stockCode: id }).toArray();
+  return await collection.find<IStock>({ stockCode: id }).toArray();
+}
+
+async function compare(ids: string[], startDate?: string, endDate?: string): Promise<IStock[]> {
+  const result: IStock[] = [];
+  const allStocks: IStock[][] = await Promise.all(ids.map((id: string) => getStock(id, startDate, endDate)));
+  
+  allStocks.forEach(stockArray => stockArray.forEach((s: IStock) => result.push(s)));
+  return result;
+
 }
