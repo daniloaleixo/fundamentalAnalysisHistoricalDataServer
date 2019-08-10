@@ -29,22 +29,22 @@ async function getStockCodes(): Promise<string[]> {
 }
 
 
-async function getStock(id: string, _startDate?: string, _endDate?: string): Promise<IStock[]> {
+async function getStock(id: string, startDate?: string, endDate?: string): Promise<IStock[]> {
   const db = MongoDB.getDBConn();
   const collection = db.collection(id);
 
-  // if (startDate && endDate)
-  //   return db.filter(s => s.stockCode == id && new Date(s.timestamp) >= new Date(startDate) && new Date(s.timestamp) <= new Date(endDate));
-  // else if (startDate)
-  //   return db.filter(s => s.stockCode == id && new Date(s.timestamp) >= new Date(startDate));
-  // else
-  return await collection.find<IStock>({ stockCode: id }).toArray();
+  if (startDate && endDate)
+    return await collection.find<IStock>({ timestamp: { "$gte": new Date(startDate), "$lte": new Date(endDate) } }).toArray();
+  else if (startDate)
+    return await collection.find<IStock>({ timestamp: { "$gte": new Date(startDate) } }).toArray();
+  else
+    return await collection.find<IStock>().toArray();
 }
 
 async function compare(ids: string[], startDate?: string, endDate?: string): Promise<IStock[]> {
   const result: IStock[] = [];
   const allStocks: IStock[][] = await Promise.all(ids.map((id: string) => getStock(id, startDate, endDate)));
-  
+
   allStocks.forEach(stockArray => stockArray.forEach((s: IStock) => result.push(s)));
   return result;
 
