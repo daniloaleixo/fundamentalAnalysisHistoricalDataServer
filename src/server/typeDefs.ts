@@ -35,6 +35,7 @@ type Stock {
 # The "Query" type is the root of all GraphQL queries.
 # (A "Mutation" type will be covered later on.)
 type Query {
+  recentStocks: [Stock]
   allStockCodes: [String]
   allProperties: [String]
   stock(id: ID!, startDate: String, endDate: String): [Stock]

@@ -15,12 +15,21 @@ const allProperties = [
 // schema.  We'll retrieve books from the "books" array above.
 export const resolvers = {
   Query: {
+    recentStocks: () => getRecentStocks(),
     allStockCodes: () => getStockCodes(),
     allProperties: () => allProperties,
     stock: (_root: any, args: any) => getStock(args.id, args.startDate, args.endDate),
     compare: (_root: any, args: any) => compare(args.ids, args.startDate, args.endDate)
   }
 };
+
+
+async function getRecentStocks(): Promise<IStock[]> {
+  const db = MongoDB.getDBConn(DATABASE.RECENT);
+  const collection = db.collection("stocks");
+  return await collection.find({}).toArray();
+}
+
 
 async function getStockCodes(): Promise<string[]> {
   const db = MongoDB.getDBConn(DATABASE.HISTORICAL);
