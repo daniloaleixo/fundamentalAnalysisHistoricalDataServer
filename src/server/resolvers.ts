@@ -1,4 +1,4 @@
-import { MongoDB } from "../db/mongo";
+import { MongoDB, DATABASE } from "../db/mongo";
 import { IStock } from "../../shared/interfaces";
 
 
@@ -23,14 +23,14 @@ export const resolvers = {
 };
 
 async function getStockCodes(): Promise<string[]> {
-  const db = MongoDB.getDBConn();
+  const db = MongoDB.getDBConn(DATABASE.HISTORICAL);
   const result = await db.listCollections().toArray();
   return result.map(r => r.name);
 }
 
 
 async function getStock(id: string, startDate?: string, endDate?: string): Promise<IStock[]> {
-  const db = MongoDB.getDBConn();
+  const db = MongoDB.getDBConn(DATABASE.HISTORICAL);
   const collection = db.collection(id);
 
   if (startDate && endDate)

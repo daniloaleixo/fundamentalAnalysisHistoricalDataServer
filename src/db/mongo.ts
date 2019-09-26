@@ -1,18 +1,22 @@
 import { Db, MongoClient } from "mongodb";
 
+export enum DATABASE {
+  HISTORICAL = "stocks",
+  RECENT = "recentStocks"
+}
+
 export class MongoDB {
-  private static dbConn: Db;
+  private static mongo: MongoClient;
 
   public static async init() {
-
-    const databaseName = "stocks";
-
-    const mongoClient: MongoClient = await this.getConnection(process.env.MAIN_DB_URI as string);
-    this.dbConn = mongoClient.db(databaseName);
+    console.log("Connecting to mongo client: ", process.env.MAIN_DB_URI);
+    this.mongo = await this.getConnection(process.env.MAIN_DB_URI as string);
     console.log("MongoDB initialized");
   }
 
-  public static getDBConn(): Db { return this.dbConn; }
+  public static getDBConn(databaseName: DATABASE): Db { 
+    return this.mongo.db(databaseName);
+  }
 
 
   private static getConnection(uri: string): Promise<MongoClient> {
