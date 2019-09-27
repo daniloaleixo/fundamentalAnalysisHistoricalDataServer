@@ -17,7 +17,7 @@ async function initServer() {
 
   // This `listen` method launches a web-server.  Existing apps
   // can utilize middleware options, which we'll discuss later.
-  server.listen().then((a: any) => {
+  server.listen((process.env.PORT || 4000)).then((a: any) => {
     console.log(`🚀  Server ready at ${a.url}`);
   });
 
