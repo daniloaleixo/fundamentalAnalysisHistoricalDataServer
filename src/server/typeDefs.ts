@@ -11,7 +11,7 @@ type Stock {
   stockCode: ID
   score: Float
   stockPrice: Float
-  patrimonioLiquido: Int
+  patrimonioLiquido: Float
   liquidezCorrente: Float
   ROE: Float
   divSobrePatrimonio: Float

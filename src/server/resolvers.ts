@@ -27,7 +27,7 @@ export const resolvers = {
 async function getRecentStocks(): Promise<IStock[]> {
   const db = MongoDB.getDBConn(DATABASE.RECENT);
   const collection = db.collection("stocks");
-  return await collection.find({}).toArray();
+  return normalizePayload(await collection.find({}).toArray());
 }
 
 
@@ -43,11 +43,11 @@ async function getStock(id: string, startDate?: string, endDate?: string): Promi
   const collection = db.collection(id);
 
   if (startDate && endDate)
-    return await collection.find<IStock>({ timestamp: { "$gte": new Date(startDate), "$lte": new Date(endDate) } }).toArray();
+    return normalizePayload(await collection.find<IStock>({ timestamp: { "$gte": new Date(startDate), "$lte": new Date(endDate) } }).toArray());
   else if (startDate)
-    return await collection.find<IStock>({ timestamp: { "$gte": new Date(startDate) } }).toArray();
+    return normalizePayload(await collection.find<IStock>({ timestamp: { "$gte": new Date(startDate) } }).toArray());
   else
-    return await collection.find<IStock>().toArray();
+    return normalizePayload(await collection.find<IStock>().toArray());
 }
 
 async function compare(ids: string[], startDate?: string, endDate?: string): Promise<IStock[]> {
@@ -56,5 +56,18 @@ async function compare(ids: string[], startDate?: string, endDate?: string): Pro
 
   allStocks.forEach(stockArray => stockArray.forEach((s: IStock) => result.push(s)));
   return result;
+}
 
+
+// We have to get everything that is greater than a 32-bit integer and transform it
+function normalizePayload(stocks: IStock[]): IStock[] {
+  return stocks.map((stock: any) => {
+    Object.keys(stock).forEach((key: string) => {
+      const value = stock[key];
+      if (typeof (value) == "number" && value > 1000000) {
+        stock[key] = value as number / 1000000;
+      }
+    });
+    return stock;
+  });
 }
