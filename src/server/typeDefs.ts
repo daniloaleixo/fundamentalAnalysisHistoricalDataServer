@@ -30,6 +30,25 @@ type Stock {
   ROIC: Float
   liquidezDoisMeses: Float
   timestamp: String
+  tipo: String
+  name: String
+  setor: String
+  subsetor: String
+  max52sem: Float
+  volMed2M: Float
+  valorMercado: Float
+  valorFirma: Float
+  nAcoes: Float
+  lucroPorAcao: Float
+  margemBruta: Float
+  EBITsobreAtivo: Float
+  giroAtivos: Float
+  ativo: Float
+  divBruta: Float
+  divLiquida: Float
+  disponibilidades: Float
+  receitaLiquida: Float
+  lucroLiquido: Float
 }
 
 # The "Query" type is the root of all GraphQL queries.
