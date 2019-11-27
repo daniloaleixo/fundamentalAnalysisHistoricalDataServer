@@ -59,5 +59,6 @@ type Query {
   allProperties: [String]
   stock(id: ID!, startDate: String, endDate: String): [Stock]
   compare(ids: [ID!], startDate: String, endDate: String): [Stock]
+  getStock(id: ID!): Stock
 }
 `;

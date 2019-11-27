@@ -59,10 +59,16 @@ export const resolvers = {
     allStockCodes: () => getStockCodes(),
     allProperties: () => allProperties,
     stock: (_root: any, args: any) => getStock(args.id, args.startDate, args.endDate),
-    compare: (_root: any, args: any) => compare(args.ids, args.startDate, args.endDate)
+    compare: (_root: any, args: any) => compare(args.ids, args.startDate, args.endDate),
+    getStock: (_root: any, args: any) => getAllInfoStock(args.id),
   }
 };
 
+async function getAllInfoStock(id: string): Promise<IStock | undefined> {
+  const db = MongoDB.getDBConn(DATABASE.RECENT);
+  const collection = db.collection("stocks");
+  return normalizePayload(await collection.find({ stockCode: id }).toArray()).pop();
+}
 
 async function getRecentStocks(): Promise<IStock[]> {
   const db = MongoDB.getDBConn(DATABASE.RECENT);
