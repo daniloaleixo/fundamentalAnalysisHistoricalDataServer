@@ -37,6 +37,7 @@
     "@types/graphql": "14.2.0",
     "@types/lodash": "4.14.136",
     "@types/mongodb": "3.1.28",
+    "@types/node-fetch": "2.5.4",
     "nodemon": "1.19.1",
     "notarealdb": "0.2.2",
     "typescript": "3.4.5"
