@@ -1,7 +1,8 @@
+require('dotenv').config();
 import { Db, MongoClient } from "mongodb";
 import { IStock } from "../shared/interfaces";
-import * as sgMail from '@sendgrid/mail';
-require('dotenv').config();
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 
@@ -10,9 +11,10 @@ require('dotenv').config();
 // 
 
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-
 export const saveStockHistory = () => {
+
+  console.log("vamos comecar o processo")
+
   return saveAllStocks()
     .then((res) => {
       console.log(res);
@@ -105,7 +107,7 @@ async function closeConnection(mongoClient: MongoClient): Promise<void> {
 
 
 // Run once a week
-if ((new Date()).getDay() == 0) {
+// if ((new Date()).getDay() == 0) {
   saveStockHistory();
-} else
-  process.exit(0);
+// } else
+  // process.exit(0);
