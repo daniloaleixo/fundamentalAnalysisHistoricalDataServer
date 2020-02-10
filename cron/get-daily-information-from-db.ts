@@ -1,5 +1,6 @@
 import { Db, MongoClient } from "mongodb";
 import { IStock } from "../shared/interfaces";
+import * as sgMail from '@sendgrid/mail';
 require('dotenv').config();
 
 
@@ -9,15 +10,29 @@ require('dotenv').config();
 // 
 
 
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 export const saveStockHistory = () => {
   return saveAllStocks()
     .then((res) => {
       console.log(res);
-
+      const msg = {
+        to: process.env.EMAIL_TO,
+        from: "danilo_aleixo@hotmail.com",
+        subject: 'O cron de análise histórica rodou certinho',
+        text: 'Deu tudo certo',
+      };
+      sgMail.send(msg);
     })
     .catch(err => {
       console.log(err);
+      const msg = {
+        to: process.env.EMAIL_TO,
+        from: "danilo_aleixo@hotmail.com",
+        subject: 'ERRO: O cron de análise histórica deu erro',
+        text: 'Deu merda em \n\n' + JSON.stringify(err),
+      };
+      sgMail.send(msg);
     });
 };
 
