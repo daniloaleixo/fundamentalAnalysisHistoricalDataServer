@@ -107,7 +107,7 @@ async function closeConnection(mongoClient: MongoClient): Promise<void> {
 
 
 // Run once a week
-// if ((new Date()).getDay() == 0) {
+if ((new Date()).getDay() == 0) {
   saveStockHistory();
-// } else
-  // process.exit(0);
+} else
+  process.exit(0);
