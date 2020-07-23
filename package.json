@@ -28,7 +28,7 @@
     "dotenv": "8.0.0",
     "express": "^4.17.1",
     "graphql": "14.4.2",
-    "lodash": "4.17.14",
+    "lodash": "4.17.19",
     "mongodb": "3.2.7",
     "ts-node": "^8.2.0"
   },
