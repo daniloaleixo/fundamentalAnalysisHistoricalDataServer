@@ -5,6 +5,10 @@
 O projeto consiste na primeira fonte de informaçôes open-source sobre análise fundamentalista das ações da Bovespa.
 O objetivo é juntar informaçôes para tomadas de decisões.
 
+
+**If you like this project you can support me.**  
+<a href="https://www.buymeacoffee.com/daniloaleixo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-white.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+
 ## Estrutura do projeto
 
 O projeto consiste de 3 projetos em repositórios separados:
